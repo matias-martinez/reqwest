@@ -366,7 +366,7 @@ impl ClientBuilder {
     /// Sets how much time an idle conn should be kept alive.
     ///
     /// Default is 500ms
-    pub fn keep_alive_timeout(mut self, keep_alive_timeout: bool) -> ClientBuilder {
+    pub fn keep_alive_timeout(mut self, keep_alive_timeout: Duration) -> ClientBuilder {
         self.config.keep_alive_timeout = keep_alive_timeout;
         self
     }
