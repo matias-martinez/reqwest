@@ -82,6 +82,8 @@ struct Config {
     http1_title_case_headers: bool,
     local_address: Option<IpAddr>,
     nodelay: bool,
+    keep_alive: bool,
+    keep_alive_timeout: Duration,
 }
 
 impl ClientBuilder {
@@ -116,7 +118,9 @@ impl ClientBuilder {
                 http2_only: false,
                 http1_title_case_headers: false,
                 local_address: None,
-                nodelay: false
+                nodelay: false,
+                keep_alive: true,
+                keep_alive_timeout: Duration::from_millis(500),
             },
         }
     }
@@ -193,6 +197,8 @@ impl ClientBuilder {
         }
 
         builder.max_idle_per_host(config.max_idle_per_host);
+        builder.keep_alive(config.keep_alive);
+        builder.keep_alive_timeout(config.keep_alive_timeout);
 
         if config.http1_title_case_headers {
             builder.http1_title_case_headers(true);
@@ -346,6 +352,22 @@ impl ClientBuilder {
     // Default is usize::MAX (no limit).
     pub fn max_idle_per_host(mut self, max: usize) -> ClientBuilder {
         self.config.max_idle_per_host = max;
+        self
+    }
+
+    /// Sets if the pooled connections should be kept alive.
+    ///
+    /// Default is true
+    pub fn keep_alive(mut self, keep_alive: bool) -> ClientBuilder {
+        self.config.keep_alive = keep_alive;
+        self
+    }
+
+    /// Sets how much time an idle conn should be kept alive.
+    ///
+    /// Default is 500ms
+    pub fn keep_alive_timeout(mut self, keep_alive_timeout: bool) -> ClientBuilder {
+        self.config.keep_alive_timeout = keep_alive_timeout;
         self
     }
 
